@@ -12,33 +12,30 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var rulesFilePath = builder.Configuration["Rules:Path"] ?? Path.Combine(AppContext.BaseDirectory, "rules.json");
-
 // Services are registered as singletons since they hold in-memory data
 builder.Services.AddSingleton<ICardService, CardService>();
 builder.Services.AddSingleton<IRulesService>(sp =>
 {
     var config = sp.GetRequiredService<IConfiguration>();
-    var env = sp.GetRequiredService<IHostEnvironment>(); // ContentRootPath
+    var env = sp.GetRequiredService<IHostEnvironment>(); 
     var logger = sp.GetRequiredService<ILogger<RulesService>>();
 
-    var configured = config["Rules:Path"]; // z appsettings.json, np "Config/rules.json"
+    var configured = config["Rules:Path"];
     string rulesPath;
 
     if (!string.IsNullOrWhiteSpace(configured))
     {
-        // jeœli u¿ytkownik poda³ œcie¿kê bezwzglêdn¹ - u¿yj jej, jeœli wzglêdn¹ - traktuj wzglêdem ContentRootPath
         rulesPath = Path.IsPathRooted(configured)
             ? configured
             : Path.Combine(env.ContentRootPath, configured.Replace('/', Path.DirectorySeparatorChar));
     }
     else
     {
-        // domyœlnie spodziewamy siê Config/rules.json w katalogu root projektu (ContentRootPath)
         rulesPath = Path.Combine(env.ContentRootPath, "Config", "rules.json");
     }
 
     logger.LogInformation("Using rules file path: {Path}", rulesPath);
+
     return new RulesService(rulesPath, logger);
 });
 

@@ -2,8 +2,8 @@
 
 public enum RuleDecision
 {
-    Never,
-    Always,
-    IfPinSet,
-    IfPinNotSet
+    Disabled,
+    Allowed,
+    AllowedIfPinSet,
+    AllowedIfPinNotSet
 }

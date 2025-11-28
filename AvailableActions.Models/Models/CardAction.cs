@@ -1,6 +1,6 @@
 ﻿namespace AvailableActions.Models.Models;
 
-public class ActionRule
+public class CardAction
 {
     public string Name { get; set; } = string.Empty;
     public Dictionary<string, string> AllowedCardTypes { get; set; } = [];

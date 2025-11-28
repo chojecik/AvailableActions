@@ -1,5 +1,4 @@
-﻿using AvailableActions.Api.Responses;
-using AvailableActions.Business.Services.Abstraction;
+﻿using AvailableActions.Business.Services.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AvailableActions.Api.Controllers;
@@ -39,17 +38,13 @@ public class CardsController : ControllerBase
 
             var actions = _rulesService.GetAllowedActions(card);
 
-            return Ok(new AllowedActionsResponse
-            {
-                UserId = userId,
-                Card = card
-            });
+            return Ok(actions);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error in GetAllowedActions");
 
-            return StatusCode(500, new { error = "internal_server_error", detail = ex.Message });
+            return StatusCode(500);
         }
     }
 }

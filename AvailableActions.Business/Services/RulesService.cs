@@ -15,7 +15,7 @@ public class RulesService : IRulesService
         AllowTrailingCommas = true
     };
 
-    private readonly RulesModels _rules = new();
+    private readonly Rules _rules = new();
     private readonly ILogger<RulesService> _logger;
 
     public RulesService(string rulesFilePath, ILogger<RulesService> logger)
@@ -29,7 +29,7 @@ public class RulesService : IRulesService
             if (!File.Exists(rulesFilePath))
             {
                 _logger.LogWarning("Rules file not found at {Path}. Using empty rules.", rulesFilePath);
-                _rules = new RulesModels();
+                _rules = new Rules();
                 return;
             }
 
@@ -37,16 +37,16 @@ public class RulesService : IRulesService
             if (string.IsNullOrWhiteSpace(json))
             {
                 _logger.LogWarning("Rules file is empty: {Path}", rulesFilePath);
-                _rules = new RulesModels();
+                _rules = new Rules();
                 return;
             }
 
-            var parsed = JsonSerializer.Deserialize<RulesModels>(json, CachedJsonOptions);
+            var parsed = JsonSerializer.Deserialize<Rules>(json, CachedJsonOptions);
 
             if (parsed == null || parsed.Actions == null || parsed.Actions.Count == 0)
             {
-                _logger.LogWarning("Parsed rules are empty or null. Raw JSON preview: {Preview}", json.Length > 500 ? json.Substring(0, 500) + "..." : json);
-                _rules = new RulesModels();
+                _logger.LogWarning("Parsed rules are empty or null. Raw JSON preview: {Preview}", json);
+                _rules = new Rules();
             }
             else
             {
@@ -57,21 +57,24 @@ public class RulesService : IRulesService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load rules");
-            _rules = new RulesModels();
+            _rules = new Rules();
         }
     }
 
     private static RuleDecision ParseDecision(string? raw)
     {
-        if (string.IsNullOrWhiteSpace(raw)) return RuleDecision.Never;
-        return raw.Trim().ToLowerInvariant() switch
-        {
-            "always" => RuleDecision.Always,
-            "never" => RuleDecision.Never,
-            "if_pin_set" => RuleDecision.IfPinSet,
-            "if_pin_not_set" => RuleDecision.IfPinNotSet,
-            _ => RuleDecision.Never
-        };
+        if (string.IsNullOrWhiteSpace(raw)) 
+            return RuleDecision.Disabled;
+
+        return raw.Trim().ToLowerInvariant() 
+            switch
+            {
+                "allowed" => RuleDecision.Allowed,
+                "disabled" => RuleDecision.Disabled,
+                "allowed_if_pin_set" => RuleDecision.AllowedIfPinSet,
+                "allowed_if_pin_not_set" => RuleDecision.AllowedIfPinNotSet,
+                _ => RuleDecision.Disabled
+            };
     }
 
     public IEnumerable<string> GetAllowedActions(CardDetails card)
@@ -84,25 +87,27 @@ public class RulesService : IRulesService
             {
                 action.AllowedCardTypes.TryGetValue(card.CardType.ToString(), out var typeDecisionRaw);
                 var typeDecision = ParseDecision(typeDecisionRaw);
-                if (typeDecision == RuleDecision.Never)
+                if (typeDecision == RuleDecision.Disabled)
                     continue;
 
                 action.AllowedCardStatuses.TryGetValue(card.CardStatus.ToString(), out var statusDecisionRaw);
                 var statusDecision = ParseDecision(statusDecisionRaw);
-                if (statusDecision == RuleDecision.Never)
+                if (statusDecision == RuleDecision.Disabled)
                     continue;
 
-                bool isAllowed = statusDecision switch
-                {
-                    RuleDecision.Always => true,
-                    RuleDecision.IfPinSet => card.IsPinSet,
-                    RuleDecision.IfPinNotSet => !card.IsPinSet,
-                    _ => false
-                };
+                bool isAllowed = statusDecision 
+                    switch
+                    {
+                        RuleDecision.Allowed => true,
+                        RuleDecision.AllowedIfPinSet => card.IsPinSet,
+                        RuleDecision.AllowedIfPinNotSet => !card.IsPinSet,
+                        _ => false
+                    };
 
-                if (typeDecision == RuleDecision.IfPinSet && !card.IsPinSet) 
+                if (typeDecision == RuleDecision.AllowedIfPinSet && !card.IsPinSet) 
                     isAllowed = false;
-                if (typeDecision == RuleDecision.IfPinNotSet && card.IsPinSet) 
+
+                if (typeDecision == RuleDecision.AllowedIfPinNotSet && card.IsPinSet) 
                     isAllowed = false;
 
                 if (isAllowed)
