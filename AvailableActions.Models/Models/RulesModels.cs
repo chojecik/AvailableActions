@@ -1,4 +1,4 @@
-﻿namespace AvailableActions.Models;
+﻿namespace AvailableActions.Models.Models;
 
 public class RulesModels
 {

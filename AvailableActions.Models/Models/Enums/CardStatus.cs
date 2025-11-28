@@ -1,4 +1,4 @@
-﻿namespace AvailableActions.Models.Enums;
+﻿namespace AvailableActions.Models.Models.Enums;
 
 public enum CardStatus
 {

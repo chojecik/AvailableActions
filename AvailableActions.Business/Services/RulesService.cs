@@ -1,44 +1,62 @@
-﻿using AvailableActions.Models;
-using AvailableActions.Models.Enums;
-using AvailableActions.Services.Abstraction;
+﻿using AvailableActions.Business.Services.Abstraction;
+using AvailableActions.Models.Models;
+using AvailableActions.Models.Models.Enums;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
+
+namespace AvailableActions.Business.Services;
 
 public class RulesService : IRulesService
 {
-    private RulesModels _rules = new();
-    private readonly ILogger<RulesService> _logger;
-    private readonly IConfiguration _configuration;
-
-    public RulesService(IConfiguration configuration, ILogger<RulesService> logger)
+    private static readonly JsonSerializerOptions CachedJsonOptions = new()
     {
-        _configuration = configuration;
+        PropertyNameCaseInsensitive = true,
+        ReadCommentHandling = JsonCommentHandling.Skip,
+        AllowTrailingCommas = true
+    };
+
+    private readonly RulesModels _rules = new();
+    private readonly ILogger<RulesService> _logger;
+
+    public RulesService(string rulesFilePath, ILogger<RulesService> logger)
+    {
         _logger = logger;
 
         try
         {
-            var rulesFilePath = _configuration["Rules:Path"]
-                                ?? Path.Combine(AppContext.BaseDirectory, "rules.json");
-
-            _logger.LogInformation("Loading rules from {Path}", rulesFilePath);
+            _logger.LogInformation("Trying to load rules from: {Path}", rulesFilePath);
 
             if (!File.Exists(rulesFilePath))
             {
-                _logger.LogWarning("Rules file not found at {Path}. Using empty rules set.", rulesFilePath);
+                _logger.LogWarning("Rules file not found at {Path}. Using empty rules.", rulesFilePath);
+                _rules = new RulesModels();
+                return;
+            }
+
+            var json = File.ReadAllText(rulesFilePath);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                _logger.LogWarning("Rules file is empty: {Path}", rulesFilePath);
+                _rules = new RulesModels();
+                return;
+            }
+
+            var parsed = JsonSerializer.Deserialize<RulesModels>(json, CachedJsonOptions);
+
+            if (parsed == null || parsed.Actions == null || parsed.Actions.Count == 0)
+            {
+                _logger.LogWarning("Parsed rules are empty or null. Raw JSON preview: {Preview}", json.Length > 500 ? json.Substring(0, 500) + "..." : json);
                 _rules = new RulesModels();
             }
             else
             {
-                var json = File.ReadAllText(rulesFilePath);
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var parsed = JsonSerializer.Deserialize<RulesModels>(json, options);
-                _rules = parsed ?? new RulesModels();
+                _rules = parsed;
+                _logger.LogInformation("Loaded {Count} action rules", _rules.Actions.Count);
             }
-
-            _logger.LogInformation("Loaded {Count} action rules", _rules.Actions?.Count ?? 0);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to load rules file: {Message}", ex.Message);
+            _logger.LogError(ex, "Failed to load rules");
             _rules = new RulesModels();
         }
     }
@@ -82,8 +100,10 @@ public class RulesService : IRulesService
                     _ => false
                 };
 
-                if (typeDecision == RuleDecision.IfPinSet && !card.IsPinSet) isAllowed = false;
-                if (typeDecision == RuleDecision.IfPinNotSet && card.IsPinSet) isAllowed = false;
+                if (typeDecision == RuleDecision.IfPinSet && !card.IsPinSet) 
+                    isAllowed = false;
+                if (typeDecision == RuleDecision.IfPinNotSet && card.IsPinSet) 
+                    isAllowed = false;
 
                 if (isAllowed)
                     allowed.Add(action.Name);
@@ -97,5 +117,3 @@ public class RulesService : IRulesService
         return allowed;
     }
 }
-   
-    

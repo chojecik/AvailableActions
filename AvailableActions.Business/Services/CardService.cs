@@ -1,12 +1,13 @@
-﻿using AvailableActions.Models;
-using AvailableActions.Models.Enums;
-using AvailableActions.Services.Abstraction;
+﻿using AvailableActions.Business.Services.Abstraction;
+using AvailableActions.Models.Models;
+using AvailableActions.Models.Models.Enums;
 
-namespace AvailableActions.Services;
+namespace AvailableActions.Business.Services;
 
 public class CardService : ICardService
 {
     private readonly Dictionary<string, Dictionary<string, CardDetails>> _userCards = CreateSampleUserCards();
+
     public async Task<CardDetails?> GetCardDetails(string userId, string cardNumber)
     {
         // At this point, we would typically make an HTTP call to an external service
@@ -19,13 +20,26 @@ public class CardService : ICardService
         }
         return cardDetails;
     }
+
+    public Task<bool> UserExists(string userId)
+    {
+        if (_userCards.ContainsKey(userId))
+        {
+            return Task.FromResult(true);
+        }
+
+        return Task.FromResult(false);
+    }
+
     private static Dictionary<string, Dictionary<string, CardDetails>> CreateSampleUserCards()
     {
         var userCards = new Dictionary<string, Dictionary<string, CardDetails>>();
+
         for (var i = 1; i <= 3; i++)
         {
             var cards = new Dictionary<string, CardDetails>();
             var cardIndex = 1;
+
             foreach (CardType cardType in Enum.GetValues(typeof(CardType)))
             {
                 foreach (CardStatus cardStatus in Enum.GetValues(typeof(CardStatus)))
@@ -40,9 +54,11 @@ public class CardService : ICardService
                     cardIndex++;
                 }
             }
+
             var userId = $"User{i}";
             userCards.Add(userId, cards);
         }
+
         return userCards;
     }
 }

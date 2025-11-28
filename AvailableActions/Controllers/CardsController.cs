@@ -1,7 +1,8 @@
-﻿using AvailableActions.Services.Abstraction;
+﻿using AvailableActions.Api.Responses;
+using AvailableActions.Business.Services.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AvailableActions.Controllers;
+namespace AvailableActions.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -26,20 +27,28 @@ public class CardsController : ControllerBase
         if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(cardNumber))
             return BadRequest(new { error = "userId and cardNumber are required" });
 
-
         try
         {
+            if (!await _cardService.UserExists(userId))
+                return NotFound(new { error = "User not found" });
+
             var card = await _cardService.GetCardDetails(userId, cardNumber);
+
             if (card == null)
                 return NotFound(new { error = "Card not found" });
 
-
             var actions = _rulesService.GetAllowedActions(card);
-            return Ok(new { userId, cardNumber, cardType = card.CardType.ToString(), cardStatus = card.CardStatus.ToString(), isPinSet = card.IsPinSet, allowedActions = actions });
+
+            return Ok(new AllowedActionsResponse
+            {
+                UserId = userId,
+                Card = card
+            });
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error in GetAllowedActions");
+
             return StatusCode(500, new { error = "internal_server_error", detail = ex.Message });
         }
     }

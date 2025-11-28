@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
@@ -11,9 +11,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Config\rules.json">
+    <ProjectReference Include="..\AvailableActions.Business\AvailableActions.Business.csproj" />
+    <ProjectReference Include="..\AvailableActions.Models\AvailableActions.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
 
 </Project>
