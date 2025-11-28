@@ -1,0 +1,225 @@
+{
+  "actions": [
+    {
+      "name": "ACTION1",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "never",
+        "Inactive": "never",
+        "Active": "always",
+        "Restricted": "never",
+        "Blocked": "never",
+        "Expired": "never",
+        "Closed": "never"
+      }
+    },
+    {
+      "name": "ACTION2",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "never",
+        "Inactive": "always",
+        "Active": "never",
+        "Restricted": "never",
+        "Blocked": "never",
+        "Expired": "never",
+        "Closed": "never"
+      }
+    },
+    {
+      "name": "ACTION3",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "always",
+        "Inactive": "always",
+        "Active": "always",
+        "Restricted": "always",
+        "Blocked": "always",
+        "Expired": "always",
+        "Closed": "always"
+      }
+    },
+    {
+      "name": "ACTION4",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "always",
+        "Inactive": "always",
+        "Active": "always",
+        "Restricted": "always",
+        "Blocked": "always",
+        "Expired": "always",
+        "Closed": "always"
+      }
+    },
+    {
+      "name": "ACTION5",
+      "allowedCardTypes": {
+        "Prepaid": "never",
+        "Debit": "never",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "always",
+        "Inactive": "always",
+        "Active": "always",
+        "Restricted": "always",
+        "Blocked": "always",
+        "Expired": "always",
+        "Closed": "always"
+      }
+    },
+    {
+      "name": "ACTION6",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "if_pin_set",
+        "Inactive": "if_pin_set",
+        "Active": "if_pin_set",
+        "Restricted": "never",
+        "Blocked": "if_pin_set",
+        "Expired": "never",
+        "Closed": "never"
+      }
+    },
+    {
+      "name": "ACTION7",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "if_pin_not_set",
+        "Inactive": "if_pin_not_set",
+        "Active": "if_pin_not_set",
+        "Restricted": "never",
+        "Blocked": "if_pin_set",
+        "Expired": "never",
+        "Closed": "never"
+      }
+    },
+    {
+      "name": "ACTION8",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "always",
+        "Inactive": "always",
+        "Active": "always",
+        "Restricted": "never",
+        "Blocked": "always",
+        "Expired": "never",
+        "Closed": "never"
+      }
+    },
+    {
+      "name": "ACTION9",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "always",
+        "Inactive": "always",
+        "Active": "always",
+        "Restricted": "always",
+        "Blocked": "always",
+        "Expired": "always",
+        "Closed": "always"
+      }
+    },
+    {
+      "name": "ACTION10",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "always",
+        "Inactive": "always",
+        "Active": "always",
+        "Restricted": "never",
+        "Blocked": "never",
+        "Expired": "never",
+        "Closed": "never"
+      }
+    },
+    {
+      "name": "ACTION11",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "never",
+        "Inactive": "always",
+        "Active": "always",
+        "Restricted": "never",
+        "Blocked": "never",
+        "Expired": "never",
+        "Closed": "never"
+      }
+    },
+    {
+      "name": "ACTION12",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "always",
+        "Inactive": "always",
+        "Active": "always",
+        "Restricted": "never",
+        "Blocked": "never",
+        "Expired": "never",
+        "Closed": "never"
+      }
+    },
+    {
+      "name": "ACTION13",
+      "allowedCardTypes": {
+        "Prepaid": "always",
+        "Debit": "always",
+        "Credit": "always"
+      },
+      "allowedCardStatuses": {
+        "Ordered": "always",
+        "Inactive": "always",
+        "Active": "always",
+        "Restricted": "never",
+        "Blocked": "never",
+        "Expired": "never",
+        "Closed": "never"
+      }
+    }
+  ]
+}

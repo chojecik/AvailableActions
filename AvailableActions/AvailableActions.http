@@ -1,0 +1,6 @@
+@AvailableActions_HostAddress = http://localhost:5251
+
+GET {{AvailableActions_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
